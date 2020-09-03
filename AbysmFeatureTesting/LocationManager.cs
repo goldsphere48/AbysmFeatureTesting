@@ -31,8 +31,5 @@ namespace AbysmFeatureTesting
 		{
 
 		}
-
-		public BackgroundsEnumerator CreateBackgroundEnumerator(LayerName layerName) =>
-			new BackgroundsEnumerator(_locations, layerName);
 	}
 }

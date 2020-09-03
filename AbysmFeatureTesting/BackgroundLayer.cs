@@ -11,6 +11,7 @@ namespace AbysmFeatureTesting
         public event Action<Sublocation> SublocationChanged;
 
         public Sublocation Current => _sublocations[_current];
+        public string CurrentBackground => _sublocations[_current].Current;
         object IEnumerator.Current => _sublocations[_current];
 
         private List<Sublocation> _sublocations;
@@ -42,7 +43,26 @@ namespace AbysmFeatureTesting
             return false;
         }
         
-        private void OnSublocationChanged(Sublocation sublocation)
+        public bool MoveNextBackground()
+		{
+            if (_current < 0) {
+                ++_current;
+                return _sublocations[_current].MoveNext();
+			}
+            if (!_sublocations[_current].MoveNext()) {
+                ++_current;
+                if (_current < _sublocations.Count) {
+                    _sublocations[_current].MoveNext();
+                    OnSublocationChanged(_sublocations[_current]);
+                    return true;
+                }
+                Reset();
+                return false;
+            }
+            return true;
+        }
+
+		private void OnSublocationChanged(Sublocation sublocation)
         {
             SublocationChanged?.Invoke(sublocation);
         }

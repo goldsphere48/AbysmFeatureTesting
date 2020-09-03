@@ -24,6 +24,7 @@ namespace AbysmFeatureTesting.Scroller
         private double _backgroundLength = 30;
         private DateTime _oldTime = DateTime.Now;
         private IDirectionalScroller _scroller;
+        private LayerName _layerName;
 
         public float Speed { get; set; }
         public IInfiniteEnumerator<TItem> Enumerator { private get; set; }
@@ -32,9 +33,10 @@ namespace AbysmFeatureTesting.Scroller
             set => _scroller = _scrollers[value];
         }
 
-        public LocationScroller()
+        public LocationScroller(LayerName layerName)
         {
             Direction = ScrollDirection.Up;
+            _layerName = layerName;
         }
         
         public void Update()
@@ -59,7 +61,7 @@ namespace AbysmFeatureTesting.Scroller
 
         private void Next()
         {
-            Console.WriteLine(Enumerator.Next());
+            Console.WriteLine(Enumerator.Next(_layerName));
         }
     }
 }

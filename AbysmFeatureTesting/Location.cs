@@ -6,8 +6,6 @@ namespace AbysmFeatureTesting
 {
 	public class Location
 	{
-		public Action Entered;
-		public Action Exited;
 		public IReadOnlyDictionary<LayerName, BackgroundLayer> BackgroundLayers => _backgroundLayers;
 
 		private Dictionary<LayerName, BackgroundLayer> _backgroundLayers = new Dictionary<LayerName, BackgroundLayer>();
@@ -16,5 +14,8 @@ namespace AbysmFeatureTesting
 		{
 			_backgroundLayers[layerName] = layer;
 		}
+
+		public LayerEnumerator CreateBackgroundEnumerator(LayerName layerName) =>
+			new LayerEnumerator(this, layerName);
 	}
 }

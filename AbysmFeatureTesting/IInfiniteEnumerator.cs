@@ -6,6 +6,6 @@ namespace AbysmFeatureTesting
 {
     interface IInfiniteEnumerator<T>
     {
-        T Next();
+        T Next(LayerName layerName);
     }
 }
