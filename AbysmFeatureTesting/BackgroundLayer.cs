@@ -6,13 +6,11 @@ using System.Text;
 
 namespace AbysmFeatureTesting
 {
-    public class BackgroundLayer : IEnumerable<Sublocation>, IEnumerator<Sublocation>
+    public class BackgroundLayer : IEnumerable<string>, IEnumerator<string>
     {
-        public event Action<Sublocation> SublocationChanged;
-
-        public Sublocation Current => _sublocations[_current];
-        public string CurrentBackground => _sublocations[_current].Current;
-        object IEnumerator.Current => _sublocations[_current];
+        public string Current => _sublocations[_current].Current;
+        public Sublocation CurrentSublocation => _sublocations[_current];
+        object IEnumerator.Current => _sublocations[_current].Current;
 
         private List<Sublocation> _sublocations;
         private int _current = -1;
@@ -34,37 +32,20 @@ namespace AbysmFeatureTesting
 
         public bool MoveNext()
         {
-            _current++;
-            if (_current < _sublocations.Count) {
-                OnSublocationChanged(_sublocations[_current]);
-                return true;
-			}
-            Reset();
-            return false;
-        }
-        
-        public bool MoveNextBackground()
-		{
             if (_current < 0) {
                 ++_current;
                 return _sublocations[_current].MoveNext();
-			}
+            }
             if (!_sublocations[_current].MoveNext()) {
                 ++_current;
                 if (_current < _sublocations.Count) {
                     _sublocations[_current].MoveNext();
-                    OnSublocationChanged(_sublocations[_current]);
                     return true;
                 }
                 Reset();
                 return false;
             }
             return true;
-        }
-
-		private void OnSublocationChanged(Sublocation sublocation)
-        {
-            SublocationChanged?.Invoke(sublocation);
         }
 
         public void Reset()
@@ -80,7 +61,7 @@ namespace AbysmFeatureTesting
             _sublocations[_current].Reset();
         }
 
-        public IEnumerator<Sublocation> GetEnumerator()
+        public IEnumerator<string> GetEnumerator()
         {
             return this;
         }

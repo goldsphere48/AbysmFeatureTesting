@@ -61,7 +61,7 @@ namespace AbysmFeatureTesting.Scroller
 
         private void Next()
         {
-            Console.WriteLine(Enumerator.Next(_layerName));
+            Console.WriteLine(Enumerator.Next());
         }
     }
 }

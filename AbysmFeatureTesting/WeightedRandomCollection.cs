@@ -18,7 +18,7 @@ namespace AbysmFeatureTesting
             _sum += weight;
         }
 
-        public TItem Next(LayerName layerName)
+        public TItem Next()
         {
             var n = 0;
             var num = _generator.Next(_sum);

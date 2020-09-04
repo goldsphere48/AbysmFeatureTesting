@@ -19,35 +19,27 @@ namespace AbysmFeatureTesting
         
         private static void Main(string[] args)
         {
-            
-            var location = new BackgroundLayer
+
+            var layer = new BackgroundLayer
             {
                 new Sublocation(2) { "1_SubLoc1_1", "1_SubLoc1_2" },
                 new Sublocation(2) { "1_SubLoc2_1", "1_SubLoc2_2" },
             };
 
-            //location.SublocationChanged += OnSubLocationChanged;
-
-            var location1 = new BackgroundLayer
+            var layer1 = new BackgroundLayer
             {
                 new Sublocation(2) { "2_SubLoc1_1", "2_SubLoc1_2" },
                 new Sublocation(2) { "2_SubLoc2_1", "2_SubLoc2_2" },
             };
 
-            //location1.SublocationChanged += OnSubLocationChanged;
-
-            var location2 = new BackgroundLayer
+            var layer2 = new BackgroundLayer
             {
                 new Sublocation(2) { "3_SubLoc1_1", "3_SubLoc1_2" },
                 new Sublocation(2) { "3_SubLoc2_1", "3_SubLoc2_2" },
             };
 
-            
-
-            
-
-            while (location1.MoveNextBackground()) {
-                Console.WriteLine(location1.CurrentBackground);
+            while (layer1.MoveNext()) {
+                Console.WriteLine(layer1.Current);
 			}
         }
     }
