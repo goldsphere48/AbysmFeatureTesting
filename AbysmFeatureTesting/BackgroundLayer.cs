@@ -8,12 +8,13 @@ namespace AbysmFeatureTesting
 {
     public class BackgroundLayer : IEnumerable<string>, IEnumerator<string>
     {
-        public string Current => _sublocations[_current].Current;
         public Sublocation CurrentSublocation => _sublocations[_current];
-        object IEnumerator.Current => _sublocations[_current].Current;
+        public string Current => CurrentSublocation.Current;
+        public bool Looping { get; set; }
+        object IEnumerator.Current => CurrentSublocation.Current;
 
         private List<Sublocation> _sublocations;
-        private int _current = -1;
+        private int _current = 0;
 
         public BackgroundLayer(IEnumerable<Sublocation> sublocations)
         {
@@ -32,32 +33,30 @@ namespace AbysmFeatureTesting
 
         public bool MoveNext()
         {
-            if (_current < 0) {
-                ++_current;
-                return _sublocations[_current].MoveNext();
-            }
-            if (!_sublocations[_current].MoveNext()) {
-                ++_current;
-                if (_current < _sublocations.Count) {
-                    _sublocations[_current].MoveNext();
-                    return true;
+            if (!CurrentSublocation.MoveNext()) {
+                if (_current + 1 == _sublocations.Count) {
+                    if (!Looping) {
+                        return false;
+					}
+                    Reset();
+                    _current = -1;
                 }
-                Reset();
-                return false;
+                _current++;
+                CurrentSublocation.MoveNext();
             }
             return true;
         }
 
         public void Reset()
         {
-            _current = -1;
+            _current = 0;
+            foreach (var sublocation in _sublocations) {
+                sublocation.Reset();
+			}
         }
 
         public void ResetCurrentSublocation()
         {
-            if (_current < 0 || _current >= _sublocations.Count) {
-                MoveNext();
-			}
             _sublocations[_current].Reset();
         }
 

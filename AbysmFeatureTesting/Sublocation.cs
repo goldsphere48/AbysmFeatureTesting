@@ -12,7 +12,7 @@ namespace AbysmFeatureTesting
 
         public string Current => _items[_current];
         object IEnumerator.Current => _items[_current];
-
+        public bool Looping { get; set; }
         public int Cycles
         {
             get => _cycles;
@@ -31,7 +31,6 @@ namespace AbysmFeatureTesting
         private List<string> _items;
         private int _current = -1;
         private int _cycles;
-        private bool _infiniteLoop;
 
         public Sublocation(IEnumerable<string> items, int cycles)
         {
@@ -71,15 +70,14 @@ namespace AbysmFeatureTesting
             if (_current == _items.Count)
             {
                 _current = 0;
-                CycleFinished?.Invoke();
-                if (!_infiniteLoop)
-                {
+                if (!Looping) {
                     _cycles--;
                 }
+                CycleFinished.SafeInvoke();
                 if (_cycles == 0)
                 {
                     _cycles = MaxCycles;
-                    AllCyclesFinished?.Invoke();
+                    AllCyclesFinished.SafeInvoke();
                     return false;
                 }
             }
@@ -95,16 +93,6 @@ namespace AbysmFeatureTesting
         public void Dispose()
         {
             Reset();
-        }
-
-        public void EnableLooping()
-        {
-            _infiniteLoop = true;
-        }
-        
-        public void DisableLooping()
-        {
-            _infiniteLoop = false;
         }
     }
 }

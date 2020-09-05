@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using AbysmFeatureTesting.Scroller;
 
 namespace AbysmFeatureTesting
@@ -38,9 +39,16 @@ namespace AbysmFeatureTesting
                 new Sublocation(2) { "3_SubLoc2_1", "3_SubLoc2_2" },
             };
 
-            while (layer1.MoveNext()) {
-                Console.WriteLine(layer1.Current);
-			}
+            var sub = new Sublocation(2) { "3_SubLoc1_1", "3_SubLoc1_2" };
+            var i = 0;
+            layer.Looping = true;
+            foreach(var item in layer) {
+                i++;
+                if (i == 40) {
+                    layer.Looping = false;
+				}
+                Console.WriteLine(item);
+            }
         }
     }
 }
