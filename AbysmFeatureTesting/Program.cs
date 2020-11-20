@@ -1,54 +1,62 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using AbysmFeatureTesting.Pools;
 using AbysmFeatureTesting.Scroller;
 
 namespace AbysmFeatureTesting
 {
     internal static class Program
     {
-        private static void OnSubLocationChanged(Sublocation subloc)
-        {
-            Console.WriteLine("Sub location changed");
-        }
-        
-        private static void OnLocationChanged()
-        {
-            Console.WriteLine("Location changed");
-        }
-        
-        private static void Main(string[] args)
-        {
-
-            var layer = new BackgroundLayer
+	    private static void Main(string[] args)
+	    {
+		    var e = new LinearPool<int> (new List<IPoolNode<int>>
             {
-                new Sublocation(2) { "1_SubLoc1_1", "1_SubLoc1_2" },
-                new Sublocation(2) { "1_SubLoc2_1", "1_SubLoc2_2" },
-            };
+				new RandomPool<int>(new List<IPoolNode<int>>
+				{
+					new Atom<int>(100),
+					new Atom<int>(200),
+					new Atom<int>(300),
+				}),
+				new Atom<int>(1),
+				new Atom<int>(2),
+				new Atom<int>(3),
+				new RandomPool<int>(new List<IPoolNode<int>>
+				{
+					new Atom<int>(1),
+					new LinearPool<int>(new List<IPoolNode<int>>
+					{
+						new Atom<int>(3),
+						new Atom<int>(4),
+						new Atom<int>(5),
+					}),
+					new Atom<int>(2),
+					new Atom<int>(3),
+					new LinearPool<int>(new List<IPoolNode<int>>
+					{
+						new Atom<int>(6),
+						new Atom<int>(7),
+						new LinearPool<int>(new List<IPoolNode<int>>
+						{
+							new Atom<int>(1),
+							new Atom<int>(2),
+							new Atom<int>(3),
+						}),
+						new Atom<int>(8),
+					})
+				})
+			});
 
-            var layer1 = new BackgroundLayer
+            var en = e.GetEnumerator();
+            while (en.MoveNext())
             {
-                new Sublocation(2) { "2_SubLoc1_1", "2_SubLoc1_2" },
-                new Sublocation(2) { "2_SubLoc2_1", "2_SubLoc2_2" },
-            };
-
-            var layer2 = new BackgroundLayer
-            {
-                new Sublocation(2) { "3_SubLoc1_1", "3_SubLoc1_2" },
-                new Sublocation(2) { "3_SubLoc2_1", "3_SubLoc2_2" },
-            };
-
-            var sub = new Sublocation(2) { "3_SubLoc1_1", "3_SubLoc1_2" };
-            var i = 0;
-            layer.Looping = true;
-            foreach(var item in layer) {
-                i++;
-                if (i == 40) {
-                    layer.Looping = false;
-				}
-                Console.WriteLine(item);
+				Console.WriteLine(en.Current.Value);
             }
+            
+
+            Console.ReadKey();
         }
     }
 }
