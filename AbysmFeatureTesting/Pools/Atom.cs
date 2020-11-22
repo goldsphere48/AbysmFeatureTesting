@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AbysmFeatureTesting.Pools
+﻿namespace Assets.Scripts.Pools
 {
 	public class Atom<T> : IPoolNode<T>
 	{

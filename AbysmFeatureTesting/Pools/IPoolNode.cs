@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AbysmFeatureTesting.Pools
+﻿namespace Assets.Scripts.Pools
 {
-	public interface IPoolNode<T>
+	public interface IPoolNode<out T>
 	{
 		T Value { get; }
 	}

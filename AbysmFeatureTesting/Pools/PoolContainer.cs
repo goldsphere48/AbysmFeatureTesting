@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
-namespace AbysmFeatureTesting.Pools
+namespace Assets.Scripts.Pools
 {
 	public abstract class PoolContainer<T> : IPoolNode<T>, IEnumerable<IPoolNode<T>>, IEnumerator<IPoolNode<T>>
 	{
-		private List<IPoolNode<T>> _poolData;
-		private int _currentIndex = -1;
+		protected List<IPoolNode<T>> _poolData;
+		private int _index;
+		private IPoolNode<T> _current;
 
 		public int Count => _poolData.Count;
-
-		public T Value => _poolData[_currentIndex].Value;
-
+		public T Value => _poolData[_index].Value;
+		public IPoolNode<T> Current => _current;
 		object? IEnumerator.Current => Current;
 
-		public IPoolNode<T> Current => _poolData[_currentIndex];
-		
-
-		protected void Initialize()
+		protected PoolContainer()
 		{
-			_poolData = Select();
+			_current = default;
+			_index = 0;
 		}
 
 		public void Add(IPoolNode<T> item)
@@ -31,8 +27,18 @@ namespace AbysmFeatureTesting.Pools
 
 		public bool MoveNext()
 		{
-			_currentIndex = GetIndex();
-			return !IsEmpty();
+			_index = GetIndex();
+			var move = CanMove();
+			if (move)
+			{
+				_current = _poolData[_index];
+			}
+			else
+			{
+				Reset();
+			}
+
+			return move;
 		}
 
 		public IEnumerator<IPoolNode<T>> GetEnumerator()
@@ -40,12 +46,16 @@ namespace AbysmFeatureTesting.Pools
 			while (MoveNext())
 			{
 				var item = Current;
-				if (item is PoolContainer<T> pool) {
+				if (item is PoolContainer<T> pool) 
+				{
 					using var enumerator = pool.GetEnumerator();
-					while (enumerator.MoveNext()) {
+					while (enumerator.MoveNext()) 
+					{
 						yield return enumerator.Current;
 					}
-				} else {
+				} 
+				else 
+				{
 					yield return item;
 				}
 			}
@@ -58,7 +68,7 @@ namespace AbysmFeatureTesting.Pools
 
 		public virtual void Reset()
 		{
-			_currentIndex = -1;
+			_index = 0;
 		}
 
 		public void Dispose()
@@ -66,8 +76,7 @@ namespace AbysmFeatureTesting.Pools
 			
 		}
 
-		protected abstract List<IPoolNode<T>> Select();
 		protected abstract int GetIndex();
-		protected abstract bool IsEmpty();
+		protected abstract bool CanMove();
 	}
 }

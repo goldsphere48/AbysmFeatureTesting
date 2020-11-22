@@ -1,43 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Assets.Scripts.Helpers;
 
-namespace AbysmFeatureTesting.Pools
+namespace Assets.Scripts.Pools
 {
-	class RandomPool<T> : PoolContainer<T>
+	public class RandomPool<T> : PoolContainer<T>
 	{
-		private readonly List<IPoolNode<T>> _data;
-		private bool[] _used;
-		private Random _random = new Random();
+		private readonly List<bool> _used;
+		private readonly Random _random = new Random();
 		private bool _finished = false;
 
 		public RandomPool(List<IPoolNode<T>> data)
 		{
-			_data = data;
-			_used = new bool[data.Count];
-			Initialize();
-		}
-
-		protected override List<IPoolNode<T>> Select()
-		{
-			return _data;
+			_used = new List<bool>(new bool[data.Count]);
+			_poolData = data;
 		}
 
 		protected override int GetIndex()
 		{
-			var freeIndexes = new List<int>();
-			for (var i = 0; i < _used.Length; i++)
-			{
-				if (!_used[i])
-				{
-					freeIndexes.Add(i);
-				}
-			}
-			var count = freeIndexes.Count;
+			var freeIndexes = _used.FindAllIndexes(x => !x);
+			var count = freeIndexes.Length;
 			if (count > 0)
 			{
-				var index = freeIndexes[_random.Next(freeIndexes.Count)];
+				var index = freeIndexes[_random.Next(freeIndexes.Length)];
 				_used[index] = true;
 				return index;
 			}
@@ -48,15 +33,15 @@ namespace AbysmFeatureTesting.Pools
 			}
 		}
 
-		protected override bool IsEmpty()
+		protected override bool CanMove()
 		{
-			return _finished;
+			return !_finished;
 		}
 
 		public override void Reset()
 		{
 			base.Reset();
-			for (var i = 0; i < _used.Length; i++)
+			for (var i = 0; i < _used.Count; i++)
 			{
 				_used[i] = false;
 			}
